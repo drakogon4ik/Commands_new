@@ -1,6 +1,6 @@
 """
 Author: Oleg Shkolnik יא9.
-Description: protokol with send and receive functions
+Description: protocol with send and receive functions
 Date: 10/12/23
 """
 

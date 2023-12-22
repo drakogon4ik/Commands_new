@@ -10,6 +10,8 @@ import os
 import subprocess
 import pyautogui
 import shutil
+from protocol import *
+from base64 import *
 
 
 MAX_PACKET = 2048
@@ -86,35 +88,31 @@ def take_screen():
 
 def send_file(socket):
     """
-    sends picture to the client
+    sends picture to the client using base64 module to be able to receive and write bytes
     :param socket: socket, to which we send
     :return: message about result of function's work
     """
     try:
         with open('screen.jpg', mode='rb') as screen:
-            response = screen.read(MAX_PACKET)
-            while response:
-                socket.send(response)
-                response = screen.read(MAX_PACKET)
-            screen.close()
+            response = b64encode(screen.read())
+            len_data = struct.pack(form, len(response))
+            socket.sendall(len_data + response)
+        return 'picture was sent successfully'
     except os.error as err:
         return f"screenshot wasn't taken due to error {str(err)}"
 
 
 def receive_file(socket):
     """
-    fills the file with the received data
+    fills the file with the received data(data was encoded with module base64, so it is bytes)
     :param socket: socket, from which we receive
     :return: message about result of function's work
     """
     try:
         with open('screen1.jpg', mode='wb') as screen:
-            response = socket.recv(MAX_PACKET)
-            while response:
-                screen.write(response)
-                response = socket.recv(MAX_PACKET)
-            screen.close()
-            return 'success'
+            response = b64decode(recv(socket))
+            screen.write(response)
+        return 'success'
     except os.error as err:
         return f"screenshot wasn't taken due to error {str(err)}"
 

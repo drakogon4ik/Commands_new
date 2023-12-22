@@ -112,7 +112,8 @@ def main():
                         send(client_socket, response)
 
                     elif cmd == COMMANDS[5]:
-                        send_file(client_socket)
+                        data = send_file(client_socket)
+                        print(data)
 
                     elif cmd in COMMANDS[4:]:
                         response = make_command_without_info(cmd)
